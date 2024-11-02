@@ -1,0 +1,4 @@
+#pragma once
+
+#define CM_BACKGROUND_COLOR 	24, 27, 36, 255
+#define CM_PRIMARY_COLOR	158, 158, 158, 255

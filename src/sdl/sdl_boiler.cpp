@@ -2,7 +2,7 @@
 #include <SDL2/SDL_ttf.h>
 
 SDL_State::SDL_State (const char* title) {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
 		printf("Failed to initialize SDL\n");
 		SDL_Quit();
 		return;
