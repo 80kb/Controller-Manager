@@ -1,7 +1,6 @@
 #include "Label.hpp"
 #include "../MainState.hpp"
 #include "../Palette.hpp"
-#include <unistd.h>
 #include <string.h>
 
 uiLabel::uiLabel( cmMainState* mainState ) {

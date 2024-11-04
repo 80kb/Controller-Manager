@@ -1,12 +1,17 @@
 #include "MainState.hpp"
 #include "Palette.hpp"
 #include <assert.h>
+#include <string>
+
+#ifdef __linux__
 #include <unistd.h>
+#elif _WIN32
+#include <windows.h>
+#endif
 
 cmMainState::cmMainState( void ) : state( "Controller Manager" ) {
 	quit = false;
 	menu = new cmMenu( this );
-
 
 	RegisterControllers();
 }
@@ -112,7 +117,7 @@ void cmMainState::WindowResized( void ) {
 }
 
 int cmMainState::PlayerCount( void ) const {
-	return players.size();
+	return (int)players.size();
 }
 
 SDL_GameController* cmMainState::GetPlayer( const int index ) const {
@@ -132,6 +137,7 @@ void cmMainState::RegisterControllers( void ) {
 		SDL_GameController* controller = SDL_GameControllerOpen( i );
 		if ( controller ) {
 			controllers.push_back( controller );
+			printf( "Successfully detected controller: %s\n", SDL_GameControllerName( controller ) );
 		} else {
 			printf( "Failed to open SDL_GameController %d\n", i );
 		}
@@ -149,12 +155,21 @@ std::string cmMainState::GetExePath( void ) const {
 	} else {
 		printf("Failed reading exe path\n");
 	}
-#elif _WIN32
-	char buffer[MAX_PATH];
-	GetModuleFileName( NULL, buffer, MAX_PATH );
-#endif
-
 	std::string path(buffer);
 	path = path.substr(0, path.find_last_of("/\\"));
+#elif _WIN32
+	wchar_t buffer[MAX_PATH];
+	GetModuleFileNameW( NULL, buffer, MAX_PATH );
+
+	int len = WideCharToMultiByte(CP_UTF8, 0, buffer, -1, NULL, 0, NULL, NULL);
+	char* char_path = new char[len + 1];
+	WideCharToMultiByte(CP_UTF8, 0, buffer, -1, char_path, len, NULL, NULL);
+	char_path[len] = '\0';
+
+	std::string path(char_path);
+	path = path.substr(0, path.find_last_of("/\\"));
+	delete[] char_path;
+#endif
+
 	return path;
 }
